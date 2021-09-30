@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Sebassss</h3>
+    <h3>BIENVENIDO A LA CLINICA SANTA MARIA</h3>
   </div>
 </template>
 
