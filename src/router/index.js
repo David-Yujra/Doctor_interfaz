@@ -6,6 +6,7 @@ import Estadisticas from '../components/Estadisticas.vue'
 import Doctores from '../components/Doctores.vue'
 import ClientesEspera from '../components/ClientesEspera.vue'
 
+
 Vue.use(VueRouter)
 
 const routes = [{
@@ -43,7 +44,8 @@ const routes = [{
         path: '/ClientesEspera',
         name: 'ClientesEspera',
         component: ClientesEspera
-    }
+    },
+
 ]
 
 const router = new VueRouter({
