@@ -5,7 +5,7 @@
     <v-app id="inspire">
       <v-data-table
         :headers="headers"
-        :items="desserts"
+        :items="doctores"
         sort-by="especialidad"
         class="elevation-1"
       >
@@ -19,58 +19,10 @@
             ></v-text-field>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
-            <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="mb-2"
-                  v-bind="attrs"
-                  v-on="on"
-                >
-               <!--    AGREGAR -->
-                </v-btn>
-                <v-btn color="success" @click="nuevoDoctor = !nuevoDoctor">
-                  Nuevo doctor
-                </v-btn>
-              </template>
-              <v-card>
-                <v-card-title>
-                  <span class="text-h5">{{ formTitle }}</span>
-                </v-card-title>
-
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12" sm="12" md="12">
-                        <v-text-field
-                          v-model="editedItem.doctor"
-                          label="Nombre del doctor"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="12" md="12">
-                        <v-text-field
-                          v-model="editedItem.especialidad"
-                          label="Especialidad"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="12" md="12">
-                        <v-text-field
-                          v-model="editedItem.activo"
-                          label="Activo"
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">
-                    Cancel
-                  </v-btn>
-                  <v-btn color="blue darken-1" text @click="save"> Guardar Cambios </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
+            <v-btn color="success" @click="nuevoDoctor = !nuevoDoctor">
+              Nuevo doctor
+            </v-btn>
+            
             <v-dialog v-model="dialogDelete" max-width="500px">
               <v-card>
                 <v-card-title class="text-h5"
@@ -91,14 +43,17 @@
           </v-toolbar>
         </template>
         <template v-slot:item.actions="{ item }">
-          <v-icon small class="mr-2" @click="editItem(item)">
+          <p @click="verItem(item.id)">
+            Ver
+          </p>
+          <v-icon small class="mr-2" @click="editItem(item.id)">
             mdi-pencil
           </v-icon>
           <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
         </template>
-        <template v-slot:no-data>
+        <!-- <template v-slot:no-data>
           <v-btn color="primary" @click="initialize"> Reset </v-btn>
-        </template>
+        </template> -->
       </v-data-table>
     </v-app>
 
@@ -113,38 +68,14 @@
           <v-row>
             <v-col cols="6">
               <v-text-field
-                v-model="editedItem.doctor"
-                label="Nombre del doctor"
+                v-model="editedItem.nombreCompleto"
+                label="Nombre completo"
               ></v-text-field>
             </v-col>
             <v-col cols="6">
               <v-text-field
-                v-model="editedItem.especialidad"
-                label="Especialidad"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field
-                v-model="editedItem.activo"
-                label="Activo"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field
-                v-model="editedItem.telefono"
-                label="Telefono"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field
-                v-model="editedItem.telefono"
-                label="Telefono"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field
-                v-model="editedItem.fechaNacimiento"
-                label="Fecha Nacimiento"
+                v-model="editedItem.categoria"
+                label="Categoria"
               ></v-text-field>
             </v-col>
             <v-col cols="6">
@@ -153,11 +84,41 @@
                 label="Genero"
               ></v-text-field>
             </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editedItem.telefonoFijo"
+                label="Telefono"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editedItem.fechaDeNacimiento"
+                label="Fecha de nacimeinto"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editedItem.numeroCelular"
+                label="Numero de Celular"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editedItem.email"
+                label="Email"
+              ></v-text-field>
+            </v-col>
      
             <v-col cols="6">
               <v-text-field
-                v-model="editedItem.categoria"
-                label="Categoria"
+                v-model="editedItem.especialidadKey"
+                label="Especialidad"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editedItem.estado"
+                label="Estado"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -194,29 +155,117 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+    <v-dialog
+      transition="dialog-bottom-transition"
+      max-width="1000"
+      v-model="modalBorrar"
+    >
+      <v-card>
+        <v-card-title> Esta seguro de borrar al Doctor? </v-card-title>
+        <v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="modalBorrar = false">
+              Cancel
+            </v-btn>
+            <v-btn color="blue darken-1" text @click="deleteItemConfirm"> Confirmar </v-btn>
+          </v-card-actions>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      transition="dialog-bottom-transition"
+      max-width="1000"
+      v-model="verDoctor"
+    >
+      <v-card>
+        <v-card-title> Agregar nuevo doctor </v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col cols="6">
+              <p>Nombre completo</p>
+              <h4>{{editedItem.nombreCompleto}}</h4>
+            </v-col>
+            <v-col cols="6">
+              <p>Categoria</p>
+              <h4>{{editedItem.categoria}}</h4>
+            </v-col>
+            <v-col cols="6">
+              <p>Genero</p>
+              <h4>{{editedItem.genero}}</h4>
+            </v-col>
+            <v-col cols="6">
+              <p>telefonoFijo</p>
+              <h4>{{editedItem.telefonoFijo}}</h4>
+            </v-col>
+            <v-col cols="6">
+              <p>fechaDeNacimiento</p>
+              <h4>{{editedItem.fechaDeNacimiento}}</h4>
+            </v-col>
+            <v-col cols="6">
+              <p>numeroCelular</p>
+              <h4>{{editedItem.numeroCelular}}</h4>
+            </v-col>
+            <v-col cols="6">
+              <p>email</p>
+              <h4>{{editedItem.email}}</h4>
+            </v-col>
+            <v-col cols="6">
+              <p>especialidadKey</p>
+              <h4>{{editedItem.especialidadKey}}</h4>
+            </v-col>
+            <v-col cols="6">
+              <p>estado</p>
+              <h4>{{editedItem.estado}}</h4>
+            </v-col>
+
+          </v-row>
+          <v-row>
+            <v-col cols="3">
+              <v-btn color="purple darken-1" text @click="save"> `Lunes ` </v-btn>
+            </v-col>
+             <v-col cols="3">
+              <v-btn color="purple darken-1" text @click="save"> `Domingo ` </v-btn>
+            </v-col>
+
+          </v-row>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="verDoctor = false">
+              Cancel
+            </v-btn>
+          </v-card-actions>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: "Doctores",
   components: {},
   data: () => ({
     nuevoDoctor: false,
+    modalBorrar: false,
+    verDoctor: false,
     dialog: false,
     dialogDelete: false,
     headers: [
       {
         text: "Doctor",
         align: "start",
-        sortable: false,
-        value: "doctor",
+        sortable: true,
+        value: "nombreCompleto",
       },
-      { text: "Especialidad", value: "especialidad" },
-      { text: "Activo", value: "activo" },
+      { text: "Categoria", value: "categoria" },
+      { text: "Genero", value: "genero" },
+      { text: "Fecha De Nacimiento", value: "fechaDeNacimiento" },
       { text: "Actions", value: "actions", sortable: false },
     ],
-    desserts: [],
+    doctores: [],
     editedIndex: -1,
     editedItem: {
       name: "",
@@ -248,65 +297,180 @@ export default {
   },
 
   created() {
-    this.initialize();
+    //this.initialize();
+    this.listDoctores();
   },
 
   methods: {
     initialize() {
-      this.desserts = [
+      /* consumir el servicio*/
+      this.doctores = [
         {
-          doctor: "Juanito Perez",
-          especialidad: "cardiologo",
-          activo: true,
+          "key" :"ecdf2726-091f-ec11-8190-f43909ccbc80",
+          "nombreCompleto": "Lucas Mendoza",
+          "categoria": "A",
+          "genero": "masculino",
+          "fechaDeNacimiento": "20/04/2000",
+          "telefonoFijo": "4421226",
+          "numeroCelular": "68511635",
+          "email": "MendozaLucas21@hotmail.com",
+          "especialidadKey": "9372D873-E916-EC11-8189-F43909CCBC80",
+          "estado": "string",
         },
         {
-          doctor: "Pablo gonzales",
-          especialidad: "neurologo",
-          activo: true,
+          "key" :"ecdf2726-091f-ec11-8190-f43909ccbc80",
+          "nombreCompleto": "Juanito Perez",
+          "categoria": "A",
+          "genero": "masculino",
+          "fechaDeNacimiento": "20/04/2000",
+          "telefonoFijo": "4421226",
+          "numeroCelular": "68511635",
+          "email": "MendozaLucas21@hotmail.com",
+          "especialidadKey": "9372D873-E916-EC11-8189-F43909CCBC80",
+          "estado": "string",
         },
         {
-          doctor: "Fabian Mendoza",
-          especialidad: "pediatra",
-          activo: true,
+          "key" :"ecdf2726-091f-ec11-8190-f43909ccbc80",
+          "nombreCompleto": "Miguel Cervantez",
+          "categoria": "A",
+          "genero": "masculino",
+          "fechaDeNacimiento": "20/04/2000",
+          "telefonoFijo": "4421226",
+          "numeroCelular": "68511635",
+          "email": "MendozaLucas21@hotmail.com",
+          "especialidadKey": "9372D873-E916-EC11-8189-F43909CCBC80",
+          "estado": "string",
         },
         {
-          doctor: "Miguel Cervantes",
-          especialidad: "dentista",
-          activo: true,
+          "key" :"ecdf2726-091f-ec11-8190-f43909ccbc80",
+          "nombreCompleto": "Robin hood",
+          "categoria": "B",
+          "genero": "masculino",
+          "fechaDeNacimiento": "20/04/2000",
+          "telefonoFijo": "4421226",
+          "numeroCelular": "68511635",
+          "email": "MendozaLucas21@hotmail.com",
+          "especialidadKey": "9372D873-E916-EC11-8189-F43909CCBC80",
+          "estado": "string",
         },
         {
-          doctor: "Roberto carlos",
-          especialidad: "cirujano",
-          activo: true,
+          "key" :"ecdf2726-091f-ec11-8190-f43909ccbc80",
+          "nombreCompleto": "Daniel Lopez",
+          "categoria": "C",
+          "genero": "masculino",
+          "fechaDeNacimiento": "20/04/2000",
+          "telefonoFijo": "4421226",
+          "numeroCelular": "68511635",
+          "email": "MendozaLucas21@hotmail.com",
+          "especialidadKey": "9372D873-E916-EC11-8189-F43909CCBC80",
+          "estado": "string",
         },
         {
-          doctor: "Mariana peralta",
-          especialidad: "traumatologia",
-          activo: true,
+          "key" :"ecdf2726-091f-ec11-8190-f43909ccbc80",
+          "nombreCompleto": "Maria Magdalena",
+          "categoria": "B",
+          "genero": "femenino",
+          "fechaDeNacimiento": "20/04/2000",
+          "telefonoFijo": "4421226",
+          "numeroCelular": "68511635",
+          "email": "MendozaLucas21@hotmail.com",
+          "especialidadKey": "9372D873-E916-EC11-8189-F43909CCBC80",
+          "estado": "string",
         },
         {
-          doctor: "Julieta Villegas",
-          especialidad: "dentista",
-          activo: true,
+          "key" :"ecdf2726-091f-ec11-8190-f43909ccbc80",
+          "nombreCompleto": "Rosario Tijeras",
+          "categoria": "D",
+          "genero": "femenino",
+          "fechaDeNacimiento": "20/04/2000",
+          "telefonoFijo": "4421226",
+          "numeroCelular": "68511635",
+          "email": "MendozaLucas21@hotmail.com",
+          "especialidadKey": "9372D873-E916-EC11-8189-F43909CCBC80",
+          "estado": "string",
         },
+        {
+          "key" :"ecdf2726-091f-ec11-8190-f43909ccbc80",
+          "nombreCompleto": "Carla lozano",
+          "categoria": "C",
+          "genero": "femenino",
+          "fechaDeNacimiento": "20/04/2000",
+          "telefonoFijo": "4421226",
+          "numeroCelular": "68511635",
+          "email": "MendozaLucas21@hotmail.com",
+          "especialidadKey": "9372D873-E916-EC11-8189-F43909CCBC80",
+          "estado": "string",
+        }
+        
       ];
     },
 
-    editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
+    listDoctores(){
+      axios
+        .get( 'http://localhost:8000/api/Doctor/list' )
+        .then(response => {
+          let respuesta = response.data;
+          this.doctores = respuesta.data;
+          console.log("Esta es la respuesta del servidor", response);
+        })
+        .catch(error => {
+          console.log("Ocurrio un error", error);
+        });
+    },
+
+    editItem(idItem) {
+      axios
+        .get( 'http://localhost:8000/api/Doctor/show', {params: {id: idItem}} )
+        .then(response => {
+          let respuesta = response.data;
+          //this.doctores = respuesta.data;
+          console.log("Esta es la respuesta del servidor show", respuesta);
+          this.editedItem = respuesta.data;
+          this.nuevoDoctor = true;
+        })
+        .catch(error => {
+          console.log("Ocurrio un error", error);
+        });
+      // this.nuevoDoctor = true;
+      // this.editedIndex = this.doctores.indexOf(item);
+      // console.log(this.editedIndex, "este es el index");
+      // this.editedItem = Object.assign({}, item);
+      
+    },
+
+    verItem(idItem) {
+      axios
+        .get( 'http://localhost:8000/api/Doctor/show', {params: {id: idItem}} )
+        .then(response => {
+          let respuesta = response.data;
+          //this.doctores = respuesta.data;
+          console.log("Esta es la respuesta del servidor show", respuesta);
+          this.editedItem = respuesta.data;
+          this.verDoctor = true;
+        })
+        .catch(error => {
+          console.log("Ocurrio un error", error);
+        });
     },
 
     deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      this.dialogDelete = true;
+      this.modalBorrar = true;
     },
 
     deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
-      this.closeDelete();
+      axios
+      .post( 'http://localhost:8000/api/Doctor/destroy', {id: this.editedItem.id} )
+        .then(response => {
+          let respuesta = response.data;
+          console.log("Esta es la respuesta del servidor en el store", respuesta);
+          this.listDoctores();
+          this.editedItem = {};
+          this.modalBorrar = false;
+        })
+        .catch(error => {
+          console.log("Ocurrio un error", error);
+        });
     },
 
     close() {
@@ -326,12 +490,24 @@ export default {
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
-      } else {
-        this.desserts.push(this.editedItem);
-      }
-      this.close();
+
+      axios
+      .post( 'http://localhost:8000/api/Doctor/store', this.editedItem )
+        .then(response => {
+          let respuesta = response.data;
+          console.log("Esta es la respuesta del servidor en el store", respuesta);
+          this.listDoctores();
+          this.editedItem = {};
+        })
+        .catch(error => {
+          console.log("Ocurrio un error", error);
+        });
+      // if (this.editedIndex > -1) {
+      //   Object.assign(this.doctores[this.editedIndex], this.editedItem);
+      // } else {
+      //   this.doctores.push(this.editedItem);
+      // }
+      // this.close();
       this.nuevoDoctor = false;
     },
   },
