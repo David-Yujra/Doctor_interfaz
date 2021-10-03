@@ -22,15 +22,13 @@
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                  color="success"
-                  dark
                   class="mb-2"
                   v-bind="attrs"
                   v-on="on"
                 >
-                  AGREGAR
+               <!--    AGREGAR -->
                 </v-btn>
-                <v-btn color="info" @click="nuevoDoctor = !nuevoDoctor">
+                <v-btn color="success" @click="nuevoDoctor = !nuevoDoctor">
                   Nuevo doctor
                 </v-btn>
               </template>
@@ -69,14 +67,14 @@
                   <v-btn color="blue darken-1" text @click="close">
                     Cancel
                   </v-btn>
-                  <v-btn color="blue darken-1" text @click="save"> Save </v-btn>
+                  <v-btn color="blue darken-1" text @click="save"> Guardar Cambios </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
             <v-dialog v-model="dialogDelete" max-width="500px">
               <v-card>
                 <v-card-title class="text-h5"
-                  >Estas seguro de querer eliminar este doctor?
+                  >Estas seguro de eliminar este doctor?
                 </v-card-title>
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -131,10 +129,66 @@
                 label="Activo"
               ></v-text-field>
             </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editedItem.telefono"
+                label="Telefono"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editedItem.telefono"
+                label="Telefono"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editedItem.fechaNacimiento"
+                label="Fecha Nacimiento"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editedItem.genero"
+                label="Genero"
+              ></v-text-field>
+            </v-col>
+     
+            <v-col cols="6">
+              <v-text-field
+                v-model="editedItem.categoria"
+                label="Categoria"
+              ></v-text-field>
+            </v-col>
           </v-row>
           <v-row>
+            <v-col cols="3">
+              <v-btn color="purple darken-1" text @click="save"> `Lunes ` </v-btn>
+            </v-col>
+             <v-col cols="3">
+              <v-btn color="purple darken-1" text @click="save"> `Domingo ` </v-btn>
+            </v-col>
+      
+            <v-col cols="6">
+              <v-btn color="red darken-1" text @click="save"> Editar </v-btn>
+            </v-col>
+          </v-row>
+
+<v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="close">
+                    Cancel
+                  </v-btn>
+                  <v-btn color="blue darken-1" text @click="save"> Guardar </v-btn>
+                </v-card-actions>
+
+
+
+
+
+          <v-row>
             <v-col cols="12">
-              <v-btn color="blue darken-1" text @click="save"> Guardar </v-btn>
+              <v-btn color="blue darken-1" text @click="save">  </v-btn>
             </v-col>
           </v-row>
         </v-card-text>
@@ -180,7 +234,7 @@ export default {
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
+      return this.editedIndex === -1 ? "New Item" : "Editar Doctor";
     },
   },
 
