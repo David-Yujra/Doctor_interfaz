@@ -4,12 +4,13 @@
       v-model="drawer"
       permanent
       app
+      v-if="!['Inicio'].includes($route.name)"
     >
       <Navbar />
     </v-navigation-drawer>
 
     <v-app-bar app>
-      <!-- -->
+      <MenuPaciente/>
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->
@@ -29,10 +30,13 @@
 
 <script>
 import Navbar from "./components/Navbar.vue";
+import MenuPaciente from "./components/MenuPaciente.vue";
+
 export default {
   name: "App",
   components: {
     Navbar,
+    MenuPaciente,
   },
 
   data: () => ({
