@@ -6,7 +6,7 @@
             <v-data-table
                 :headers="headers"
                 :items="doctores"
-                sort-by="especialidad"
+                :hide-default-footer="true"
                 class="elevation-1"
             >
                 <template v-slot:top>
@@ -17,42 +17,19 @@
                             label="Buscar"
                             class="mx-4 my-4"
                         ></v-text-field>
+                        <v-btn color="primary" @click="aplicarBusqueda"
+                            >Buscar</v-btn
+                        >
+
                         <v-divider class="mx-4" inset vertical></v-divider>
                         <v-spacer></v-spacer>
-                        <v-btn
-                            color="success"
-                            @click="nuevoDoctor = !nuevoDoctor"
-                        >
+                        <v-btn color="success" @click="nuevoDoc">
                             Nuevo doctor
                         </v-btn>
-
-                        <v-dialog v-model="dialogDelete" max-width="500px">
-                            <v-card>
-                                <v-card-title class="text-h5"
-                                    >Estas seguro de eliminar este doctor?
-                                </v-card-title>
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn
-                                        color="blue darken-1"
-                                        text
-                                        @click="closeDelete"
-                                        >Cancel</v-btn
-                                    >
-                                    <v-btn
-                                        color="blue darken-1"
-                                        text
-                                        @click="deleteItemConfirm"
-                                        >OK</v-btn
-                                    >
-                                    <v-spacer></v-spacer>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
                     </v-toolbar>
                 </template>
                 <template v-slot:item.actions="{ item }">
-                    <p @click="verItem(item.id)">Ver</p>
+                    <p @click="verItem(item.key)">Ver</p>
                     <v-icon small class="mr-2" @click="editItem(item.key)">
                         mdi-pencil
                     </v-icon>
@@ -60,12 +37,34 @@
                         mdi-delete
                     </v-icon>
                 </template>
-                <!-- <template v-slot:no-data>
-          <v-btn color="primary" @click="initialize"> Reset </v-btn>
-        </template> -->
             </v-data-table>
-        </v-app>
+            <!---  PAGINACION --->
+            <div class="text-xs-center pt-2 md4 lg4">
+                <!-- I removed v-model and added @input and :value -->
+                <div class="form-group col-4">
+                    <label> Resultados por pagina</label>
+                    <select
+                        class="form-control"
+                        style="width: 50px; border: 1px solid black"
+                        v-model="paginacion.filasPorPagina"
+                        @change="filasPorPaginaHandler()"
+                    >
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>
 
+                <v-pagination
+                    @input="cambioDePaginaHandler"
+                    :value="paginacion.pagina"
+                    :length="paginacion.paginas"
+                ></v-pagination>
+            </div>
+        </v-app>
+        <!---  MODAL NUEVO / EDITAR DOCTOR --->
         <v-dialog
             transition="dialog-bottom-transition"
             max-width="1000"
@@ -80,6 +79,7 @@
                                 v-model="editedItem.nombreCompleto"
                                 label="Nombre completo"
                             ></v-text-field>
+                            <!-- <span class="rojo">Existe un error aqui</span> -->
                         </v-col>
                         <v-col cols="6">
                             <v-text-field
@@ -125,26 +125,35 @@
                             ></v-text-field>
                         </v-col>
                         <v-col cols="6">
-                            <v-text-field
-                                v-model="editedItem.estado"
+                            <v-select
+                                :items="['Activo', 'Inactivo']"
+                                filled
                                 label="Estado"
-                            ></v-text-field>
+                                v-model="editedItem.estado"
+                            ></v-select>
                         </v-col>
                     </v-row>
-                    <v-row>
-                        <v-col cols="3">
-                            <v-btn color="purple darken-1" text @click="save">
-                                `Lunes `
-                            </v-btn>
-                        </v-col>
-                        <v-col cols="3">
-                            <v-btn color="purple darken-1" text @click="save">
-                                `Domingo `
-                            </v-btn>
-                        </v-col>
 
+                    <v-row>
+                        <div>
+                            <v-btn
+                                color="purple darken-1"
+                                text
+                                v-for="dia in dias"
+                                :key="dia"
+                                @click="abrirModalHoras(dia)"
+                            >
+                                {{ dia }}
+                            </v-btn>
+                        </div>
+                    </v-row>
+                    <v-row>
                         <v-col cols="6">
-                            <v-btn color="red darken-1" text @click="save">
+                            <v-btn
+                                color="red darken-1"
+                                text
+                                @click="modalDias = true"
+                            >
                                 Editar
                             </v-btn>
                         </v-col>
@@ -152,13 +161,27 @@
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="close">
+                        <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="nuevoDoctor = false"
+                        >
                             Cancelar
                         </v-btn>
-                        <v-btn color="blue darken-1" text @click="actualizar">
+                        <v-btn
+                            v-show="editar"
+                            color="blue darken-1"
+                            text
+                            @click="actualizar"
+                        >
                             actualizar
                         </v-btn>
-                        <v-btn color="blue darken-1" text @click="save">
+                        <v-btn
+                            v-show="!editar"
+                            color="blue darken-1"
+                            text
+                            @click="save"
+                        >
                             Guardar
                         </v-btn>
                     </v-card-actions>
@@ -172,6 +195,7 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
+        <!---  MODAL CONFIRMAR BORRAR DOCTOR --->
         <v-dialog
             transition="dialog-bottom-transition"
             max-width="1000"
@@ -200,6 +224,7 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
+        <!---  MODAL VER DOCTOR --->
         <v-dialog
             transition="dialog-bottom-transition"
             max-width="1000"
@@ -271,328 +296,180 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
+        <!---  MODAL CONFIRMAR DIAS --->
+        <v-dialog
+            transition="dialog-bottom-transition"
+            max-width="500"
+            v-model="modalDias"
+        >
+            <v-card>
+                <v-card-title> Selecione los dias de trabajo </v-card-title>
+                <v-card-text>
+                    <v-container fluid>
+                        <div class="row">
+                            <div class="col-6">
+                                <v-checkbox
+                                    v-model="dias"
+                                    label="Lunes"
+                                    value="Lunes"
+                                ></v-checkbox>
+                                <v-checkbox
+                                    v-model="dias"
+                                    label="Martes"
+                                    value="Martes"
+                                ></v-checkbox>
+                                <v-checkbox
+                                    v-model="dias"
+                                    label="Miercoles"
+                                    value="Miercoles"
+                                ></v-checkbox>
+                                <v-checkbox
+                                    v-model="dias"
+                                    label="Jueves"
+                                    value="Jueves"
+                                ></v-checkbox>
+                            </div>
+                            <div class="col-6">
+                                <v-checkbox
+                                    v-model="dias"
+                                    label="Viernes"
+                                    value="Viernes"
+                                ></v-checkbox>
+                                <v-checkbox
+                                    v-model="dias"
+                                    label="Sabado"
+                                    value="Sabado"
+                                ></v-checkbox>
+                                <v-checkbox
+                                    v-model="dias"
+                                    label="Domingo"
+                                    value="Domingo"
+                                ></v-checkbox>
+                            </div>
+                        </div>
+                    </v-container>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="modalDias = false"
+                        >
+                            Cancelar
+                        </v-btn>
+                        <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="confirmarDias"
+                        >
+                            Confirmar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+        <!---  MODAL CONFIRMAR HORAS --->
+        <v-dialog
+            transition="dialog-bottom-transition"
+            max-width="1000"
+            v-model="modalHoras"
+        >
+            <v-card>
+                <v-card-title>
+                    Ingrese el horario para el dia {{ diaElegido }}
+                </v-card-title>
+                <v-card-text>
+                    <div>
+                        <v-btn
+                            color="success"
+                            v-show="!crearIntervalo"
+                            @click="crearIntervalo = true"
+                            >Nuevo Intervalo</v-btn
+                        >
+                        <v-btn
+                            color="primary"
+                            v-show="crearIntervalo"
+                            @click="guardarIntervalo"
+                            >Guardar Intervalo</v-btn
+                        >
+                    </div>
+                    <div v-show="crearIntervalo">
+                        <h4>Elija el intervalo:</h4>
+                        <v-row justify="space-around" align="center">
+                            <v-col style="width: 350px; flex: 0 1 auto">
+                                <h2>Hora inicio:</h2>
+                                <v-time-picker
+                                    v-model="horaInicio"
+                                    :max="horaFin"
+                                ></v-time-picker>
+                            </v-col>
+                            <v-col style="width: 350px; flex: 0 1 auto">
+                                <h2>Hora fin:</h2>
+                                <v-time-picker
+                                    v-model="horaFin"
+                                    :min="horaInicio"
+                                ></v-time-picker>
+                            </v-col>
+                        </v-row>
+                    </div>
+                    <div>
+                        <v-simple-table fixed-header height="300px">
+                            <template v-slot:default>
+                                <thead>
+                                    <tr>
+                                        <th class="text-left">Num</th>
+                                        <th class="text-left">Inicio</th>
+                                        <th class="text-left">Fin</th>
+                                        <th class="text-left">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(item, index) in horariosDia"
+                                        :key="index"
+                                    >
+                                        <td>{{ index+1 }}</td>
+                                        <td><h3>{{ item.inicio }}</h3></td>
+                                        <td><h3>{{ item.fin }}</h3></td>
+                                        <td><v-btn>Editar</v-btn><v-btn>Borrar</v-btn></td>
+                                    </tr>
+                                </tbody>
+                            </template>
+                        </v-simple-table>
+                    </div>
+                    <v-card> </v-card>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="modalHoras = false"
+                        >
+                            Cancelar
+                        </v-btn>
+                        <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="modalHoras = false"
+                        >
+                            Confirmar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
+<script src="./Doctores.js"></script>
 
-<script>
-import axios from "axios";
-
-export default {
-    name: "Doctores",
-    components: {},
-    data: () => ({
-        nuevoDoctor: false,
-        modalBorrar: false,
-        verDoctor: false,
-        dialog: false,
-        dialogDelete: false,
-        headers: [
-            {
-                text: "Doctor",
-                align: "start",
-                sortable: true,
-                value: "nombreCompleto",
-            },
-            { text: "Categoria", value: "categoria" },
-            { text: "Genero", value: "genero" },
-            { text: "Fecha De Nacimiento", value: "fechaDeNacimiento" },
-            { text: "Actions", value: "actions", sortable: false },
-        ],
-        doctores: [],
-        editedIndex: -1,
-        editedItem: {
-            name: "",
-            especialidad: "",
-            activo: true,
-        },
-        defaultItem: {
-            name: "",
-            especialidad: "",
-            activo: true,
-        },
-        search: "",
-        attrs: "",
-    }),
-
-    computed: {
-        formTitle() {
-            return this.editedIndex === -1 ? "New Item" : "Editar Doctor";
-        },
-    },
-
-    watch: {
-        dialog(val) {
-            val || this.close();
-        },
-        dialogDelete(val) {
-            val || this.closeDelete();
-        },
-    },
-
-    created() {
-        //this.initialize();
-        this.listDoctores();
-    },
-
-    methods: {
-        initialize() {
-            /* consumir el servicio*/
-            this.doctores = [
-                {
-                    key: "ecdf2726-091f-ec11-8190-f43909ccbc80",
-                    nombreCompleto: "Lucas Mendoza",
-                    categoria: "A",
-                    genero: "masculino",
-                    fechaDeNacimiento: "20/04/2000",
-                    telefonoFijo: "4421226",
-                    numeroCelular: "68511635",
-                    email: "MendozaLucas21@hotmail.com",
-                    especialidadKey: "9372D873-E916-EC11-8189-F43909CCBC80",
-                    estado: "string",
-                },
-                {
-                    key: "ecdf2726-091f-ec11-8190-f43909ccbc80",
-                    nombreCompleto: "Juanito Perez",
-                    categoria: "A",
-                    genero: "masculino",
-                    fechaDeNacimiento: "20/04/2000",
-                    telefonoFijo: "4421226",
-                    numeroCelular: "68511635",
-                    email: "MendozaLucas21@hotmail.com",
-                    especialidadKey: "9372D873-E916-EC11-8189-F43909CCBC80",
-                    estado: "string",
-                },
-                {
-                    key: "ecdf2726-091f-ec11-8190-f43909ccbc80",
-                    nombreCompleto: "Miguel Cervantez",
-                    categoria: "A",
-                    genero: "masculino",
-                    fechaDeNacimiento: "20/04/2000",
-                    telefonoFijo: "4421226",
-                    numeroCelular: "68511635",
-                    email: "MendozaLucas21@hotmail.com",
-                    especialidadKey: "9372D873-E916-EC11-8189-F43909CCBC80",
-                    estado: "string",
-                },
-                {
-                    key: "ecdf2726-091f-ec11-8190-f43909ccbc80",
-                    nombreCompleto: "Robin hood",
-                    categoria: "B",
-                    genero: "masculino",
-                    fechaDeNacimiento: "20/04/2000",
-                    telefonoFijo: "4421226",
-                    numeroCelular: "68511635",
-                    email: "MendozaLucas21@hotmail.com",
-                    especialidadKey: "9372D873-E916-EC11-8189-F43909CCBC80",
-                    estado: "string",
-                },
-                {
-                    key: "ecdf2726-091f-ec11-8190-f43909ccbc80",
-                    nombreCompleto: "Daniel Lopez",
-                    categoria: "C",
-                    genero: "masculino",
-                    fechaDeNacimiento: "20/04/2000",
-                    telefonoFijo: "4421226",
-                    numeroCelular: "68511635",
-                    email: "MendozaLucas21@hotmail.com",
-                    especialidadKey: "9372D873-E916-EC11-8189-F43909CCBC80",
-                    estado: "string",
-                },
-                {
-                    key: "ecdf2726-091f-ec11-8190-f43909ccbc80",
-                    nombreCompleto: "Maria Magdalena",
-                    categoria: "B",
-                    genero: "femenino",
-                    fechaDeNacimiento: "20/04/2000",
-                    telefonoFijo: "4421226",
-                    numeroCelular: "68511635",
-                    email: "MendozaLucas21@hotmail.com",
-                    especialidadKey: "9372D873-E916-EC11-8189-F43909CCBC80",
-                    estado: "string",
-                },
-                {
-                    key: "ecdf2726-091f-ec11-8190-f43909ccbc80",
-                    nombreCompleto: "Rosario Tijeras",
-                    categoria: "D",
-                    genero: "femenino",
-                    fechaDeNacimiento: "20/04/2000",
-                    telefonoFijo: "4421226",
-                    numeroCelular: "68511635",
-                    email: "MendozaLucas21@hotmail.com",
-                    especialidadKey: "9372D873-E916-EC11-8189-F43909CCBC80",
-                    estado: "string",
-                },
-                {
-                    key: "ecdf2726-091f-ec11-8190-f43909ccbc80",
-                    nombreCompleto: "Carla lozano",
-                    categoria: "C",
-                    genero: "femenino",
-                    fechaDeNacimiento: "20/04/2000",
-                    telefonoFijo: "4421226",
-                    numeroCelular: "68511635",
-                    email: "MendozaLucas21@hotmail.com",
-                    especialidadKey: "9372D873-E916-EC11-8189-F43909CCBC80",
-                    estado: "string",
-                },
-            ];
-        },
-
-        listDoctores() {
-            axios
-                .get("https://localhost:5001/api/v1/Doctor", {
-                    params: { version: "1" },
-                })
-                .then((response) => {
-                    let respuesta = response.data;
-                    this.doctores = respuesta.rows;
-                    console.log("Esta es la respuesta del servidor", respuesta);
-                })
-                .catch((error) => {
-                    console.log("Ocurrio un error", error);
-                });
-        },
-
-        editItem(idItem) {
-            axios
-                .get("https://localhost:5001/api/v1/Doctor/"+idItem, {
-                    params: { key: idItem },
-                })
-                .then((response) => {
-                    let respuesta = response.data;
-                    //this.doctores = respuesta.data;
-                    console.log(
-                        "Esta es la respuesta del servidor show",
-                        respuesta
-                    );
-                    this.editedItem = respuesta;
-                    this.nuevoDoctor = true;
-                })
-                .catch((error) => {
-                    console.log("Ocurrio un error", error);
-                });
-            // this.nuevoDoctor = true;
-            // this.editedIndex = this.doctores.indexOf(item);
-            // console.log(this.editedIndex, "este es el index");
-            // this.editedItem = Object.assign({}, item);
-        },
-
-        verItem(idItem) {
-            axios
-                .get("http://localhost:8000/api/Doctor/show", {
-                    params: { id: idItem },
-                })
-                .then((response) => {
-                    let respuesta = response.data;
-                    //this.doctores = respuesta.data;
-                    console.log(
-                        "Esta es la respuesta del servidor show",
-                        respuesta
-                    );
-                    this.editedItem = respuesta.data;
-                    this.verDoctor = true;
-                })
-                .catch((error) => {
-                    console.log("Ocurrio un error", error);
-                });
-        },
-
-        deleteItem(item) {
-            this.editedItem = Object.assign({}, item);
-            this.modalBorrar = true;
-        },
-
-        deleteItemConfirm() {
-            axios
-                .post("http://localhost:8000/api/Doctor/destroy", {
-                    id: this.editedItem.id,
-                })
-                .then((response) => {
-                    let respuesta = response.data;
-                    console.log(
-                        "Esta es la respuesta del servidor en el store",
-                        respuesta
-                    );
-                    this.listDoctores();
-                    this.editedItem = {};
-                    this.modalBorrar = false;
-                })
-                .catch((error) => {
-                    console.log("Ocurrio un error", error);
-                });
-        },
-
-        close() {
-            this.dialog = false;
-            this.$nextTick(() => {
-                this.editedItem = Object.assign({}, this.defaultItem);
-                this.editedIndex = -1;
-            });
-        },
-
-        closeDelete() {
-            this.dialogDelete = false;
-            this.$nextTick(() => {
-                this.editedItem = Object.assign({}, this.defaultItem);
-                this.editedIndex = -1;
-            });
-        },
-
-        save() {
-            this.editItem.version = "1";
-            axios
-                .post("https://localhost:5001/api/v1/Doctor", this.editedItem)
-                .then((response) => {
-                    let respuesta = response.data;
-                    console.log(
-                        "Esta es la respuesta del servidor en el store",
-                        respuesta
-                    );
-                    this.listDoctores();
-                    this.editedItem = {};
-                })
-                .catch((error) => {
-                    console.log("Ocurrio un error", error);
-                });
-            // if (this.editedIndex > -1) {
-            //   Object.assign(this.doctores[this.editedIndex], this.editedItem);
-            // } else {
-            //   this.doctores.push(this.editedItem);
-            // }
-            // this.close();
-            this.nuevoDoctor = false;
-        },
-        actualizar() {
-            this.editItem.version = "1";
-            axios
-                .put("https://localhost:5001/api/v1/Doctor/"+this.editItem.key, this.editedItem)
-                .then((response) => {
-                    let respuesta = response.data;
-                    console.log(
-                        "Esta es la respuesta del servidor en el store",
-                        respuesta
-                    );
-                    this.listDoctores();
-                    this.editedItem = {};
-                })
-                .catch((error) => {
-                    console.log("Ocurrio un error", error);
-                });
-            // if (this.editedIndex > -1) {
-            //   Object.assign(this.doctores[this.editedIndex], this.editedItem);
-            // } else {
-            //   this.doctores.push(this.editedItem);
-            // }
-            // this.close();
-            this.nuevoDoctor = false;
-        },
-    },
-};
-</script>
 <style scoped>
 .table {
     border: solid 1px;
 }
 .azul {
     background-color: yellow;
+}
+.rojo {
+    color: red;
 }
 </style>

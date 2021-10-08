@@ -15,7 +15,7 @@
         <v-divider></v-divider>
         <div class="imagen_menu">
             <div class="foto_menu">
-                <img src="../assets/4.jpg" alt="" />
+                <img src="../assets/hospital.jpg" alt="" />
             </div>
             <v-list dense>
                 <router-link
@@ -82,7 +82,7 @@ export default {
 
 }
 .foto_menu{
-    height: 140px;
+    height: 60px;
 
 }
 
