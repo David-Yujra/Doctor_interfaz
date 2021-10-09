@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="altura100 fondo">
         <v-list-item class="px-2 fondo_menu">
             <v-list-item-avatar>
                 <v-img src="../assets/mio.jpeg"></v-img>
@@ -14,9 +14,9 @@
 
         <v-divider></v-divider>
         <div class="imagen_menu">
-            <div class="foto_menu">
+            <!-- <div class="foto_menu">
                 <img src="../assets/hospital.jpg" alt="" />
-            </div>
+            </div> -->
             <v-list dense>
                 <router-link
                     v-for="item in items"
@@ -70,6 +70,9 @@ export default {
 };
 </script>
 <style scoped>
+.altura100{
+    height: 100%;
+}
 .fondo_menu {
     background-image: radial-gradient(
         circle farthest-corner at 7.2% 13.6%,
@@ -77,8 +80,9 @@ export default {
         rgba(8, 70, 218, 1) 90%
     );
 }
-.imagen_menu {
-    height: 100px;
+.fondo {
+    /* height: 100px; */
+    background-image: url('../assets/hospital.jpg');
 
 }
 .foto_menu{
