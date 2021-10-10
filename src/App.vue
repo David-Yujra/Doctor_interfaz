@@ -9,7 +9,7 @@
       <Navbar />
     </v-navigation-drawer>
 
-    <v-app-bar app v-if="!['Login'].includes($route.name)">
+    <v-app-bar max-height=80 height=80 v-if="!['Login'].includes($route.name)">
       <MenuPaciente/>
     </v-app-bar >
 
