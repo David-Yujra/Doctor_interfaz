@@ -14,6 +14,7 @@
         </v-sheet>
       </v-carousel-item>
     </v-carousel>
+    dddd
   </div>
 </template>
 
