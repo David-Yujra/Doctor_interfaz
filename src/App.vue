@@ -45,7 +45,11 @@ export default {
       { title: "Users", icon: "mdi-account-group-outline" },
     ],
     mini: true,
+    usuario: {}
     //
   }),
+  mounted(){
+    this.usuario = JSON.parse(localStorage.getItem("Usuario"));
+  }
 };
 </script>

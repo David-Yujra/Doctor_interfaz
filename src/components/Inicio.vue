@@ -42,9 +42,13 @@ export default {
           src: "https://cdn.vuetifyjs.com/images/carousel/planet.jpg",
         },
       ],
+      usuario: {},
       
     };
   },
+  mounted(){
+    this.usuario = JSON.parse(localStorage.getItem("Usuario"));
+  }
 };
 </script>
 
