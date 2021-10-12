@@ -25,15 +25,18 @@ export default {
             usuarios: [
                 {
                     usuario: "sebas",
-                    password: "sebas"
+                    password: "sebas",
+                    rol: 1
                 },
                 {
                     usuario: "david",
-                    password: "david"
+                    password: "david",
+                    rol: 1
                 },
                 {
                     usuario: "andres",
-                    password: "andres"
+                    password: "andres",
+                    rol: 2
                 },
             ]
 
@@ -52,7 +55,16 @@ export default {
                     console.log("Se encontro el usuario");
                     if(this.usuarios[i].password == this.contrasena){
                         console.log("clave correcta");
-                        this.$router.push({name: "inicio"})
+                        localStorage.setItem('Usuario', JSON.stringify(this.usuarios[i]))
+                        if(this.usuarios[i].rol == 1){
+                            console.log("entro al 1", this.usuarios[i].rol);
+                            this.$router.push({name: "Home"})
+                        }else{
+                            console.log("entro al 2", this.usuarios[i].rol);
+
+                            this.$router.push({name: "Inicio"})
+                        }
+                        
                     }else{
                         console.log("clave incorrecta")
                     }
