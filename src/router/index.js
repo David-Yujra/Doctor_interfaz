@@ -8,12 +8,15 @@ import ClientesEspera from '../components/ClientesEspera.vue'
 import Inicio from '../components/Inicio.vue'
 import Login from '../components/Login.vue'
 import LoginPaciente from '../components/LoginPaciente.vue'
+import Institucion from '../views/Institucion.vue'
+import DoctoresExterno from '../views/DoctoresExterno.vue'
+
 
 
 Vue.use(VueRouter)
 
 const routes = [{
-        path: '/',
+        path: '/Home',
         name: 'Home',
         component: Home
     },
@@ -54,6 +57,11 @@ const routes = [{
         component: Inicio
     },
     {
+        path: '/',
+        name: 'Inicio',
+        component: Inicio
+    },
+    {
         path: '/Login',
         name: 'Login',
         component: Login
@@ -63,6 +71,17 @@ const routes = [{
         name: 'LoginPaciente',
         component: LoginPaciente
     },
+    {
+        path: '/Institucion',
+        name: 'Institucion',
+        component: Institucion
+    },
+    {
+        path: '/DoctoresExterno',
+        name: 'DoctoresExterno',
+        component: DoctoresExterno  
+    },
+    
 
 ]
 

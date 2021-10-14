@@ -4,12 +4,12 @@
       v-model="drawer"
       permanent
       app
-      v-if="!['Inicio', 'Login'].includes($route.name)"
+      v-if="!['Inicio', 'Login', 'Institucion', 'DoctoresExterno'].includes($route.name)"
     >
       <Navbar />
     </v-navigation-drawer>
 
-    <v-app-bar max-height=80 height=80 v-if="!['Login', 'Doctores'].includes($route.name)">
+    <v-app-bar max-height=80 height=80 v-if="!['Login'].includes($route.name)">
       <MenuPaciente/>
     </v-app-bar >
 

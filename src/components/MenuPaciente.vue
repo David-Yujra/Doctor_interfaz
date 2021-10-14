@@ -5,14 +5,14 @@
       <img src="../assets/logo.jpg" alt="" />
     </div>
     <div class="contenedorBotones">
-      <a>Inicio</a>
-      <a>Institucion</a>
+      <router-link :to="{ name: 'Inicio' }"
+        >Inicio</router-link >
+
+      <router-link :to="{ name: 'Institucion' }" >Institucion</router-link >
       <a>Informacion</a>
       <a>Contacto</a>
       <a>Ubicacion</a>
-      <router-link :to="{ name: 'Login' }" v-show="!logueado"
-        >Login</router-link
-      >
+      <router-link :to="{ name: 'Login' }" v-show="!logueado">Login</router-link >
       <a v-show="!logueado">Registrarse</a>
       <v-menu
         
@@ -32,6 +32,12 @@
 
         <v-list>
           <v-list-item  link>
+            <router-link :to="{ name: 'Home' }" v-show="usuario.rol == 1" >
+              <v-list-item-title>Administrador</v-list-item-title>
+            </router-link >
+            
+          </v-list-item>
+          <v-list-item  link>
             <v-list-item-title @click="cerrarSesion()" >cerrar sesion</v-list-item-title>
           </v-list-item>
         </v-list>
@@ -49,6 +55,7 @@ export default {
           localStorage.clear();
           this.usuario = {}
           this.logueado = false;
+          this.$router.push({ name: 'Inicio' });
       }
   },
   data() {

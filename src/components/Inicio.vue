@@ -1,23 +1,26 @@
 <template>
-  <div class="contenedorInicio" style="height: 100%">
-    <v-carousel v-model="model" height="100%">
-      <v-carousel-item
-        v-for="(item, i) in items"
-        :key="i"
-      >
-        <div class="contenedorImg">
-          <img :src="item.src" alt="">
+  <div>
+    <div class="contenedorInicio" style="height: 100%">
+      <v-carousel v-model="model" height="100%">
+        <v-carousel-item
+          v-for="(item, i) in items"
+          :key="i"
+        >
+          <div class="contenedorImg">
+            <img :src="item.src" alt="">
 
-        </div>
-        
-      </v-carousel-item>
-    </v-carousel>
-    <div class="contenedorBotones">
-      <a class="botonPrincipal">ejfwefqw</a>
-      <a class="botonPrincipal">ejfwefqw</a>
-      <a class="botonPrincipal">ejfwefqw</a>
-      <a class="botonPrincipal">ejfwefqw</a>
+          </div>
+          
+        </v-carousel-item>
+      </v-carousel>
+      <div class="contenedorBotones">
+        <router-link class="botonPrincipal" :to="{ name: 'DoctoresExterno' }" >Doctores</router-link >
+        <a class="botonPrincipal">ejfwefqw</a>
+        <a class="botonPrincipal">ejfwefqw</a>
+        <a class="botonPrincipal">ejfwefqw</a>
+      </div>
     </div>
+
   </div>
 </template>
 
@@ -81,4 +84,6 @@ export default {
   height: 100%; 
   object-fit: contain;
 }
+
+
 </style>
