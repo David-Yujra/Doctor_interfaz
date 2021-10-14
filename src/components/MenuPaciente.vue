@@ -14,7 +14,6 @@
         >Login</router-link
       >
       <a v-show="!logueado">Registrarse</a>
-      <a v-show="logueado">{{ usuario.usuario }}</a>
       <v-menu
         
         offset-y

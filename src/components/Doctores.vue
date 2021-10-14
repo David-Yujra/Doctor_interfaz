@@ -93,6 +93,24 @@
                                 label="Genero"
                             ></v-text-field>
                         </v-col>
+                          <v-col cols="6">
+                            <v-text-field
+                                v-model="editedItem.carnetDeIdentidad"
+                                label="CI"
+                            ></v-text-field>
+                         </v-col>                    
+                          <v-col cols="6">
+                            <v-text-field
+                                v-model="editedItem.direccionDomicilio"
+                                label="Direccion De Domicilio"
+                            ></v-text-field>
+                        </v-col>
+                         <v-col cols="6">
+                            <v-text-field
+                                v-model="editedItem.nroLicencia"
+                                label="Numero De Licencia"
+                            ></v-text-field>
+                        </v-col>
                         <v-col cols="6">
                             <v-text-field
                                 v-model="editedItem.telefonoFijo"
@@ -119,10 +137,23 @@
                         </v-col>
 
                         <v-col cols="6">
-                            <v-text-field
+                            <!-- <v-text-field
                                 v-model="editedItem.especialidadKey"
                                 label="Especialidad"
-                            ></v-text-field>
+                            ></v-text-field> -->
+                            <!-- <select v-model="selected">
+                                <option v-for="option in options" v-bind:value="option.value">
+                                    {{ option.text }}
+                                </option>
+                            </select> -->
+                            <v-select
+                                :items="especialidades"
+                                filled
+                                label="Especialidades"
+                                v-model="editedItem.especialidadKey"
+                                item-value='key'
+                                item-text='nombreEspecialidad'
+                            ></v-select>
                         </v-col>
                         <v-col cols="6">
                             <v-select
@@ -131,6 +162,7 @@
                                 label="Estado"
                                 v-model="editedItem.estado"
                             ></v-select>
+                            
                         </v-col>
                     </v-row>
 

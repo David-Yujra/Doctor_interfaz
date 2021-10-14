@@ -18,6 +18,10 @@ export default {
             { text: "Estado", value: "estado" },
             { text: "Categoria", value: "categoria" },
             { text: "Genero", value: "genero" },
+            { text: "Carnet De Identidad", value: "carnetDeIdentidad" },
+            { text: "Especialidad", value: "nombreEspecialidad" },
+            { text: "Direccion de Domicilio", value: "direccionDomicilio" },
+            { text: "Numero De Licencia", value: "nroLicencia" },
             { text: "Fecha De Nacimiento", value: "fechaDeNacimiento" },
             { text: "Actions", value: "actions", sortable: false },
         ],
@@ -50,7 +54,8 @@ export default {
         horaInicio: null,
         horaFin: null,
         crearIntervalo: false,
-        horariosDia: []
+        horariosDia: [],
+        especialidades: []
     }),
 
     computed: {
@@ -71,6 +76,7 @@ export default {
     created() {
         //this.initialize();
         this.listDoctores();
+        this.listEspecialidades();
     },
 
     methods: {
@@ -107,6 +113,22 @@ export default {
                     this.paginacion.paginas = respuesta.totalPages;
                     this.paginacion.pagina = respuesta.currentPage;
                     this.paginacion.filasPorPagina = respuesta.pageSize;
+                })
+                .catch((error) => {
+                    console.log("Ocurrio un error", error);
+                });
+        },
+        listEspecialidades() {
+            axios
+                .get("https://localhost:5001/api/v1/Especialidad/")
+                .then((response) => {
+                    let respuesta = response.data;
+                    //this.doctores = respuesta.data;
+                    console.log(
+                        "Esta es la respuesta del servidor show",
+                        respuesta
+                    );
+                    this.especialidades = respuesta;
                 })
                 .catch((error) => {
                     console.log("Ocurrio un error", error);

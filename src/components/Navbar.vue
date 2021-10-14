@@ -5,7 +5,28 @@
                 <v-img src="../assets/mio.jpeg"></v-img>
             </v-list-item-avatar>
 
-            <v-list-item-title>DAVID YUJRA</v-list-item-title>
+            <!-- <v-list-item-title>{{usuario.usuario}}</v-list-item-title> -->
+            <v-menu
+                offset-y
+                v-if="logueado"
+            >
+                <template v-slot:activator="{ attrs, on }">
+                <v-btn
+                    color="primary"
+                    class="white--text ma-5"
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                    {{ usuario.usuario }}
+                </v-btn>
+                </template>
+
+                <v-list>
+                <v-list-item  link>
+                    <v-list-item-title @click="cerrarSesion()" >cerrar sesion</v-list-item-title>
+                </v-list-item>
+                </v-list>
+            </v-menu>
 
             <!-- <v-btn icon @click.stop="mini = !mini">
         <v-icon>mdi-chevron-left</v-icon>
@@ -64,9 +85,31 @@ export default {
                     componente: "Estadisticas",
                 },
             ],
+            usuario: "",
+            logueado: false,
             //
         };
     },
+    methods: {
+        cerrarSesion(){
+          console.log("se cerro sesion");
+          localStorage.clear();
+          this.usuario = {}
+          this.logueado = false;
+          this.$router.push('/Inicio')
+        }
+
+    },
+    mounted(){
+        this.usuario = JSON.parse(localStorage.getItem("Usuario"));
+        if(this.usuario == null){
+            this.usuario = {}
+            this.logueado = false;
+
+        }else{
+            this.logueado = true;
+        }
+    }
 };
 </script>
 <style scoped>
