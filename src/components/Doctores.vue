@@ -118,10 +118,10 @@
                             ></v-text-field>
                         </v-col>
                         <v-col cols="6">
-                            <v-text-field
+                            <v-date-picker
                                 v-model="editedItem.fechaDeNacimiento"
-                                label="Fecha de nacimeinto"
-                            ></v-text-field>
+                                label="Fecha de nacimiento"
+                            ></v-date-picker>
                         </v-col>
                         <v-col cols="6">
                             <v-text-field
