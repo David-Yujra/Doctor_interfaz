@@ -47,6 +47,7 @@ export default {
             pagina: 1
         },
         dias: [],
+        dia: {},
 
         modalDias: false,
         modalHoras: false,
@@ -55,7 +56,13 @@ export default {
         horaFin: null,
         crearIntervalo: false,
         horariosDia: [],
-        especialidades: []
+        especialidades: [],
+        NuevoHorario: false,
+        horario: {},
+        horarios: [],
+        horariosDoctor: [],
+        diaDoctor: {},
+        url: "https://clinicmanagementwebservice20211116223102.azurewebsites.net"
     }),
 
     computed: {
@@ -77,6 +84,7 @@ export default {
         //this.initialize();
         this.listDoctores();
         this.listEspecialidades();
+        this.listHorarios();
     },
 
     methods: {
@@ -98,7 +106,7 @@ export default {
 
         listDoctores() {
             axios
-                .get("https://localhost:5001/api/v1/Doctor", {
+                .get(this.url + "/api/v1/Doctor", {
                     params: {
                         version: "1",
                         PageSize: this.paginacion.filasPorPagina,
@@ -118,9 +126,24 @@ export default {
                     console.log("Ocurrio un error", error);
                 });
         },
+        listHorarioDoctor() {
+            axios
+                .get(this.url + "/api/v1/DiaDoctor", {
+                    params: {
+                        Search: this.editedItem.nombreCompleto,
+                    },
+                })
+                .then((response) => {
+                    let respuesta = response.data;
+                    this.horariosDoctor = respuesta.rows;
+                })
+                .catch((error) => {
+                    console.log("Ocurrio un error", error);
+                });
+        },
         listEspecialidades() {
             axios
-                .get("https://localhost:5001/api/v1/Especialidad/")
+                .get(this.url + "/api/v1/Especialidad/")
                 .then((response) => {
                     let respuesta = response.data;
                     //this.doctores = respuesta.data;
@@ -134,15 +157,30 @@ export default {
                     console.log("Ocurrio un error", error);
                 });
         },
+        listHorarios() {
+            axios
+                .get(this.url + "/api/v1/Horario")
+                .then((response) => {
+                    let respuesta = response.data;
+                    //this.doctores = respuesta.data;
+                    console.log(
+                        "Esta es la respuesta del servidor show",
+                        respuesta
+                    );
+                    this.horarios = respuesta.rows;
+                })
+                .catch((error) => {
+                    console.log("Ocurrio un error", error);
+                });
+        },
 
         nuevoDoc() {
             this.nuevoDoctor = !this.nuevoDoctor;
-
         },
 
         editItem(idItem) {
             axios
-                .get("https://localhost:5001/api/v1/Doctor/" + idItem, {
+                .get(this.url + "/api/v1/Doctor/" + idItem, {
                     params: { key: idItem },
                 })
                 .then((response) => {
@@ -155,6 +193,7 @@ export default {
                     this.editedItem = respuesta;
                     this.nuevoDoctor = true;
                     this.editar = true;
+                    this.listHorarioDoctor();
                 })
                 .catch((error) => {
                     console.log("Ocurrio un error", error);
@@ -164,7 +203,7 @@ export default {
 
         verItem(idItem) {
             axios
-                .get("https://localhost:5001/api/v1/Doctor/" + idItem, {
+                .get(this.url + "/api/v1/Doctor/" + idItem, {
                     params: { key: idItem },
                 })
                 .then((response) => {
@@ -190,7 +229,7 @@ export default {
 
         deleteItemConfirm() {
             axios
-                .delete("https://localhost:5001/api/v1/Doctor/" + this.editedItem.key)
+                .delete(this.url + "/api/v1/Doctor/" + this.editedItem.key)
                 .then((response) => {
                     let respuesta = response.data;
                     console.log(
@@ -225,7 +264,7 @@ export default {
         save() {
             this.editItem.version = "1";
             axios
-                .post("https://localhost:5001/api/v1/Doctor", this.editedItem)
+                .post(this.url + "/api/v1/Doctor", this.editedItem)
                 .then((response) => {
                     let respuesta = response.data;
                     console.log(
@@ -257,11 +296,58 @@ export default {
             // this.close();
             this.nuevoDoctor = false;
         },
+        saveDia() {
+
+            axios
+                .post(this.url + "/api/v1/Dia", this.dia)
+                .then((response) => {
+                    let respuesta = response.data;
+                    console.log(
+                        "Esta es la respuesta del servidor en el store",
+                        respuesta
+                    );
+                    this.dia = {};
+                    this.diaDoctor.diaKey = respuesta.key;
+                    this.diaDoctor.doctorKey = this.editedItem.key;
+                    this.saveDiaDoctor();
+                })
+                .catch((error) => {
+                    console.log("Ocurrio un error", error.response);
+                    //let arrayErrores = error.response.data;
+                    this.errores = {};
+
+
+                });
+
+            this.NuevoHorario = false;
+        },
+        saveDiaDoctor() {
+
+            axios
+                .post(this.url + "/api/v1/DiaDoctor", this.diaDoctor)
+                .then((response) => {
+                    let respuesta = response.data;
+                    console.log(
+                        "Esta es la respuesta del servidor en el store DIA DOCTOR",
+                        respuesta
+                    );
+                    this.diaDoctor = {};
+                    this.listHorarioDoctor();
+                })
+                .catch((error) => {
+                    console.log("Ocurrio un error", error.response);
+                    //let arrayErrores = error.response.data;
+                    this.errores = {};
+
+
+                });
+
+        },
         actualizar() {
             this.editItem.version = "1";
             console.log(this.editedItem.key)
             axios
-                .put("https://localhost:5001/api/v1/Doctor/" + this.editedItem.key, this.editedItem)
+                .put(this.url + "/api/v1/Doctor/" + this.editedItem.key, this.editedItem)
                 .then((response) => {
                     let respuesta = response.data;
                     console.log(

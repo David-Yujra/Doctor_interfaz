@@ -3,7 +3,8 @@
         <div class="control">
             <div class="form">
                 <img class="logo" src="../assets/LOGO_CLINICA.png" alt="">
-                <p> BIENVENID@ <br> PACIENTE </p>
+                <!-- <p> BIENVENID@ <br> PACIENTE </p> -->
+                <p> BIENVENID@ <br></p>
                 <input class="separar user" type="text" placeholder="Usuario" v-model="usuario">
                 <input class="separar password" type="password" placeholder="Contraseña" v-model="contrasena">
                 <button class="separar-mas" @click="login"> INICIAR SESION</button>
@@ -24,8 +25,13 @@ export default {
             contrasena: "",
             usuarios: [
                 {
-                    usuario: "sebas",
-                    password: "sebas",
+                    usuario: "ruben",
+                    password: "ruben",
+                    rol: 1
+                },
+                {
+                    usuario: "alejandro",
+                    password: "alejandro",
                     rol: 1
                 },
                 {
@@ -36,6 +42,11 @@ export default {
                 {
                     usuario: "andres",
                     password: "andres",
+                    rol: 2
+                },
+                {
+                    usuario: "emi",
+                    password: "emi",
                     rol: 2
                 },
             ]

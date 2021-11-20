@@ -4,13 +4,13 @@
       v-model="drawer"
       permanent
       app
-      v-if="!['Inicio', 'Login', 'Institucion', 'DoctoresExterno'].includes($route.name)"
+      v-if="!['Inicio', 'Login', 'Institucion', 'DoctoresExterno', 'Especialidades'].includes($route.name)"
     >
       <Navbar />
     </v-navigation-drawer>
 
     <v-app-bar max-height=80 height=80 v-if="!['Login'].includes($route.name)">
-      <MenuPaciente/>
+      <MenuPaciente @toggleRegistro="abrirModalRegistro"/>
     </v-app-bar >
 
     <!-- Sizes your content based upon application components -->
@@ -48,6 +48,11 @@ export default {
     usuario: {}
     //
   }),
+  methods:{
+    abrirModalRegistro(parametro){
+      console.log("Se abre el modal", parametro);
+    }
+  },
   mounted(){
     this.usuario = JSON.parse(localStorage.getItem("Usuario"));
   }

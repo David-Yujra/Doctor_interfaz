@@ -180,6 +180,16 @@
                         </div>
                     </v-row>
                     <v-row>
+                        <v-col cols="12">
+                            <v-list-item two-line>
+                                <v-list-item-content v-for="horario in horariosDoctor" :key="horario.diaDoctorId">
+                                    <v-list-item-title>{{horario.diaSemana}}</v-list-item-title>
+                                    <v-list-item-subtitle>{{horario.horaInicio}} - {{horario.horaFin}}</v-list-item-subtitle>
+                                </v-list-item-content>
+                            </v-list-item>
+                        </v-col>
+                    </v-row>
+                    <v-row>
                         <v-col cols="6">
                             <v-btn
                                 color="red darken-1"
@@ -188,6 +198,14 @@
                             >
                                 Editar
                             </v-btn>
+                            <v-btn
+                                color="red darken-1"
+                                text
+                                @click="NuevoHorario = true"
+                            >
+                                Nuevo Horario
+                            </v-btn>
+                            
                         </v-col>
                     </v-row>
 
@@ -443,6 +461,19 @@
                                 ></v-time-picker>
                             </v-col>
                         </v-row>
+                        <v-row>
+                            <v-col>
+                                <select>
+                                    <option value="Lunes">Lunes</option>
+                                    <option value="Martes">Martes</option>
+                                    <option value="Miercoles">Miercoles</option>
+                                    <option value="Jueves">Jueves</option>
+                                    <option value="Viernes">Viernes</option>
+                                    <option value="Sabado">Sabado</option>
+                                    <option value="Domingo">Domingo</option>
+                                </select>
+                            </v-col>
+                        </v-row>
                     </div>
                     <div>
                         <v-simple-table fixed-header height="300px">
@@ -489,6 +520,75 @@
                     </v-card-actions>
                 </v-card-text>
             </v-card>
+        </v-dialog>
+        <v-dialog 
+            transition="dialog-bottom-transition"
+            max-width="1000"
+            v-model="NuevoHorario"
+        >
+            <v-card>
+                <v-card-text>
+                    <h4>Elija el dia:</h4>
+
+                    <v-row>
+                        <v-col>
+                            Elija dia
+                            <v-select
+                                :items="['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']"
+                                filled
+                                label="Dia"
+                                v-model="dia.diaSemana"
+                                item-value='key'
+                                item-text='nombreEspecialidad'
+                            >
+                            
+                            </v-select>
+
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col>
+                            Elija el Horario
+                            <v-select
+                                :items="horarios"
+                                filled
+                                label="Horario"
+                                v-model="dia.horarioKey"
+                                item-value='key'
+                            >
+                                <template v-slot:selection="{ item }">
+                                    {{ item.horaInicio }} - {{ item.horaFin }}
+                                </template>
+                                <template v-slot:item="{ item }">
+                                    {{ item.horaInicio }} - {{ item.horaFin }}
+                                </template>
+                            
+                            </v-select>
+                        </v-col>
+                    </v-row>
+                    
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="NuevoHorario = false"
+                        >
+                            Cancelar
+                        </v-btn>
+                        <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="saveDia()"
+                        >
+                            Confirmar
+                        </v-btn>
+                    </v-card-actions>
+                    
+                </v-card-text>
+                
+            </v-card>
+
         </v-dialog>
     </div>
 </template>

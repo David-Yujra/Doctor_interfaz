@@ -55,6 +55,11 @@ export default {
                     componente: "ClientesEspera",
                 },
                 {
+                    title: "HORARIOS",
+                    icon: "mdi-home-city",
+                    componente: "Horario",
+                },
+                {
                     title: "DOCTORES",
                     icon: "mdi-account",
                     componente: "Doctores",
@@ -64,6 +69,7 @@ export default {
                     icon: "mdi-home-city",
                     componente: "Estadisticas",
                 },
+                
             ],
             usuario: "",
             logueado: false,

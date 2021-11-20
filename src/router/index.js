@@ -10,6 +10,8 @@ import Login from '../components/Login.vue'
 import LoginPaciente from '../components/LoginPaciente.vue'
 import Institucion from '../views/Institucion.vue'
 import DoctoresExterno from '../views/DoctoresExterno.vue'
+import Especialidades from '../views/Especialidades.vue'
+import Horario from '../components/Horario.vue'
 
 
 
@@ -79,9 +81,20 @@ const routes = [{
     {
         path: '/DoctoresExterno',
         name: 'DoctoresExterno',
-        component: DoctoresExterno  
+        component: DoctoresExterno
     },
-    
+    {
+        path: '/Especialidades',
+        name: 'Especialidades',
+        component: Especialidades
+    },
+    {
+        path: '/Horario',
+        name: 'Horario',
+        component: Horario
+    }
+
+
 
 ]
 
