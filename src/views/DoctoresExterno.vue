@@ -84,7 +84,7 @@ export default {
     methods: {
         listDoctores() {
             axios
-                .get("https://localhost:5001/api/v1/Doctor", {
+                .get("https://clinicmanagementwebservice20211116223102.azurewebsites.net/api/v1/Doctor", {
                     params: {
                         version: "1",
                         PageSize: this.paginacion.filasPorPagina,

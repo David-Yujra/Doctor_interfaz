@@ -113,7 +113,7 @@ export default {
         },
         listEspecialidades() {
             axios
-                .get("https://localhost:5001/api/v1/Especialidad/")
+                .get("https://clinicmanagementwebservice20211116223102.azurewebsites.net/api/v1/Especialidad/")
                 .then((response) => {
                     let respuesta = response.data;
                     //this.doctores = respuesta.data;

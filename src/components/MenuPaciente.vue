@@ -354,7 +354,7 @@ export default {
         guardarPaciente() {
             this.paciente.version = "1";
             axios
-                .post("https://localhost:5001/api/v1/Paciente", this.paciente)
+                .post("https://clinicmanagementwebservice20211116223102.azurewebsites.net/api/v1/Paciente", this.paciente)
                 .then((response) => {
                     let respuesta = response.data;
                     console.log(
